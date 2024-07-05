@@ -6,6 +6,8 @@ const Pill = styled.li`
     border: solid 1px #282c34;
     padding: 6px 10px;
     border-radius: 15px;
+  cursor: pointer;
+
 `
 export default function TimePill({isActive,title,onPillClick}) {
 

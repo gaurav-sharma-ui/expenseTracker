@@ -10,11 +10,11 @@ justify-content: center;
 background-color: #282c34;
 flex-direction: column;
 `
-export default function TotalPrice(){
+export default function TotalPrice({totalPrice}){
     return(
         <TotalPriceStructure className="total__price">
             <small>Spend So Far</small>
-            <p>Rs.2000</p>
+            <p>Rs.{totalPrice}</p>
         </TotalPriceStructure>
     )
 }

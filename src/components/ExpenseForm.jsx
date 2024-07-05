@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import {useState} from 'react';
+import {useState,useRef} from 'react';
 
 // Container for the form elements
 const FormGroup = styled.div`
@@ -50,6 +50,7 @@ const Input = styled.input`
 
 export default function ExpenseForm({isOpen,handleClickModal,onAddExpense}){
     const [name,setName] = useState('');
+    const inputRef = useRef(null);
     const [amount,setAmount] = useState('');
     const [counter,setCounter] = useState(0);
     const [nameValidation,setNameValidation] =useState(false);
@@ -102,6 +103,13 @@ export default function ExpenseForm({isOpen,handleClickModal,onAddExpense}){
         handleClickModal();
     }
 
+    // Ensure input focus when modal opens
+    if (isOpen) {
+        setTimeout(() => {
+        inputRef.current.focus();
+        }, 0); // Delay to ensure modal DOM update
+    }
+
     return(
         <div className={`${isOpen ? 'active' : ''} expense__form`}>
             <span onClick={handleClickModal} className="expense__form-cancel">X</span>
@@ -113,6 +121,7 @@ export default function ExpenseForm({isOpen,handleClickModal,onAddExpense}){
                     <Input
                         type="text"
                         value={name}
+                        ref={inputRef}
                         onChange={handleNameChange}
                         />
                     <span className={`${nameValidation ? 'error' : ''}`}>Please fill in the value</span>

@@ -98,6 +98,7 @@ h2 {
   position: absolute;
   background: #282c34;
   border-radius: 10px;
+  cursor: pointer;
 }
 .expense__list {
   height: 380px;

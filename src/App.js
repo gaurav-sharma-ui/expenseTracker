@@ -1,15 +1,3 @@
-/*
-1 - Value added should come first and not last - DONE
-2 - cancel button should delete the record - DONE
-
-
-3 - once the iexpense is added it should update the total
-4 - user can filter as week wise and month wise
-5 - when i click on add expense the description field
-should get the focus automatically
-6 - Form validation
-*/
-
 import { useState } from 'react';
 import styled from 'styled-components';
 import Greetings from './components/Greetings';
@@ -28,30 +16,38 @@ const Container = styled.div`
 `;
 
 function App() {
-  // Initialize state with data from localStorage or an empty array
   const savedExpenses = localStorage.getItem('expenses');
   const initialExpenses = savedExpenses ? JSON.parse(savedExpenses) : [];
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [expenseLists, setExpenseLists] = useState(initialExpenses);
+  const [totalPrice, setTotalPrice] = useState(() => {
+    // Initialize total price based on existing expenses
+    return initialExpenses.reduce((acc, expense) => acc + parseInt(expense.amount, 10), 0);
+  });
 
-  function handleClickModal() {
+  const handleClickModal = () => {
     setIsModalOpen(!isModalOpen);
-  }
+  };
 
-  function handleAddExpense(expense) {
+  const handleAddExpense = (expense) => {
     const updatedExpenses = [expense, ...expenseLists];
     setExpenseLists(updatedExpenses);
+    updateTotalPrice(updatedExpenses);
     localStorage.setItem('expenses', JSON.stringify(updatedExpenses));
-  }
+  };
 
-  function handleDeleteExpense(id) {
-    const updatedList = expenseLists.filter((list) => {
-      return list.id !== id;
-    })
+  const handleDeleteExpense = (id) => {
+    const updatedList = expenseLists.filter((expense) => expense.id !== id);
     setExpenseLists(updatedList);
+    updateTotalPrice(updatedList);
     localStorage.setItem('expenses', JSON.stringify(updatedList));
-  }
+  };
+
+  const updateTotalPrice = (expenses) => {
+    const total = expenses.reduce((acc, expense) => acc + parseInt(expense.amount, 10), 0);
+    setTotalPrice(total);
+  };
 
   return (
     <div className="App">
@@ -59,19 +55,14 @@ function App() {
         <header className="App-header">
           <Greetings />
           <TimePillList />
-          <TotalPrice />
+          <TotalPrice totalPrice={totalPrice} />
         </header>
         <main>
-          <ExpenseList
-            expenseLists={expenseLists}
-            onDeleteExpense={handleDeleteExpense}
-          />
-          <ExpenseForm
-            isOpen={isModalOpen}
-            handleClickModal={handleClickModal}
-            onAddExpense={handleAddExpense}
-          />
-          <button className="add__expense" onClick={handleClickModal}>Add Expense</button>
+          <ExpenseList expenseLists={expenseLists} onDeleteExpense={handleDeleteExpense} />
+          <ExpenseForm isOpen={isModalOpen} handleClickModal={handleClickModal} onAddExpense={handleAddExpense} />
+          <button className="add__expense" onClick={handleClickModal}>
+            Add Expense
+          </button>
         </main>
       </Container>
     </div>
