@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import {useState,useRef} from 'react';
+import {useState} from 'react';
 
 // Container for the form elements
 const FormGroup = styled.div`
@@ -50,7 +50,6 @@ const Input = styled.input`
 
 export default function ExpenseForm({isOpen,handleClickModal,onAddExpense}){
     const [name,setName] = useState('');
-    const inputRef = useRef(null);
     const [amount,setAmount] = useState('');
     const [counter,setCounter] = useState(0);
     const [nameValidation,setNameValidation] =useState(false);
@@ -88,26 +87,21 @@ export default function ExpenseForm({isOpen,handleClickModal,onAddExpense}){
         if(!isValid){
             return;
         }
-        const id=counter;
+        const timeStamp = Date.now();
+        const id=`${timeStamp}-${counter}`;
         let expenseData={
             id,
             name,
             amount,
+            timeStamp,
             date:formattedDate,
-            displayDate:displayDate
+            displayDate
         }
         onAddExpense(expenseData)
         setCounter(counter+1);
         setName('');
         setAmount('');
         handleClickModal();
-    }
-
-    // Ensure input focus when modal opens
-    if (isOpen) {
-        setTimeout(() => {
-        inputRef.current.focus();
-        }, 0); // Delay to ensure modal DOM update
     }
 
     return(
@@ -121,7 +115,6 @@ export default function ExpenseForm({isOpen,handleClickModal,onAddExpense}){
                     <Input
                         type="text"
                         value={name}
-                        ref={inputRef}
                         onChange={handleNameChange}
                         />
                     <span className={`${nameValidation ? 'error' : ''}`}>Please fill in the value</span>

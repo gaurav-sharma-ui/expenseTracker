@@ -2,14 +2,15 @@ import { useState } from 'react';
 import styled from 'styled-components';
 import Greetings from './components/Greetings';
 import TotalPrice from './components/TotalPrice';
-import TimePillList from './components/TimePillList';
+// import TimePillList from './components/TimePillList';
+import FilterPills from './components/FilterPills';
 import ExpenseForm from './components/ExpenseForm';
 import ExpenseList from './components/ExpenseList';
 
 const Container = styled.div`
   max-width: 375px;
   margin: 0 auto;
-  height: 100vh;
+  height: 95vh;
   position: relative;
   padding: 15px 30px;
   background-color: #f6f8fa;
@@ -54,7 +55,8 @@ function App() {
       <Container>
         <header className="App-header">
           <Greetings />
-          <TimePillList />
+          <FilterPills />
+          {/* <TimePillList /> */}
           <TotalPrice totalPrice={totalPrice} />
         </header>
         <main>
