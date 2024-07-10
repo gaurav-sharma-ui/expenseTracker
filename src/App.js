@@ -22,11 +22,11 @@ function App() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [expenseLists, setExpenseLists] = useState(initialExpenses);
   const [filteredExpenses, setFilteredExpenses] = useState(() => {
-    const filtered = initialExpenses.filter((expense) => {
+    const today = new Date().getDate();
+    return initialExpenses.filter((expense) => {
       const expenseDate = new Date(expense.timeStamp);
-      return expenseDate.getDate() === new Date().getDate();
+      return expenseDate.getDate() === today;
     });
-    return filtered;
   });
   const [totalPrice, setTotalPrice] = useState(() => {
     return initialExpenses.reduce((acc, expense) => acc + parseInt(expense.amount, 10), 0);
@@ -37,19 +37,45 @@ function App() {
   };
 
   const handleAddExpense = (expense) => {
+    // Update expenseLists with the new expense
     const updatedExpenses = [expense, ...expenseLists];
     setExpenseLists(updatedExpenses);
+
+    // Filter the updated list based on selectedDay
+    const filtered = updatedExpenses.filter((exp) => {
+      const expenseDate = new Date(exp.timeStamp);
+      return expenseDate.getDate() === selectedDay;
+    });
+
+    // Update filteredExpenses with the newly filtered list
+    setFilteredExpenses(filtered);
+
+    // Update total price
     updateTotalPrice(updatedExpenses);
+
+    // Update localStorage
     localStorage.setItem('expenses', JSON.stringify(updatedExpenses));
-    filterExpenses(updatedExpenses, selectedDay);
   };
 
+
   const handleDeleteExpense = (id) => {
+    // Remove the expense from expenseLists
     const updatedList = expenseLists.filter((expense) => expense.id !== id);
     setExpenseLists(updatedList);
+    // Filter the updated list based on selectedDay
+    const filtered = updatedList.filter((expense) => {
+      const expenseDate = new Date(expense.timeStamp);
+      return expenseDate.getDate() === selectedDay;
+    });
+
+    // Update filteredExpenses with the newly filtered list
+    setFilteredExpenses(filtered);
+
+    // Update total price
     updateTotalPrice(updatedList);
+
+    // Update localStorage
     localStorage.setItem('expenses', JSON.stringify(updatedList));
-    filterExpenses(updatedList, selectedDay);
   };
 
   const updateTotalPrice = (expenses) => {
@@ -65,7 +91,6 @@ function App() {
       return expenseDate.getDate() === day;
     });
     setFilteredExpenses(filtered);
-    updateTotalPrice(filtered);
   };
 
   const onFilterChange = (day) => {
