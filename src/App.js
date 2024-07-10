@@ -2,7 +2,6 @@ import { useState } from 'react';
 import styled from 'styled-components';
 import Greetings from './components/Greetings';
 import TotalPrice from './components/TotalPrice';
-// import TimePillList from './components/TimePillList';
 import FilterPills from './components/FilterPills';
 import ExpenseForm from './components/ExpenseForm';
 import ExpenseList from './components/ExpenseList';
@@ -22,8 +21,14 @@ function App() {
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [expenseLists, setExpenseLists] = useState(initialExpenses);
+  const [filteredExpenses, setFilteredExpenses] = useState(() => {
+    const filtered = initialExpenses.filter((expense) => {
+      const expenseDate = new Date(expense.timeStamp);
+      return expenseDate.getDate() === new Date().getDate();
+    });
+    return filtered;
+  });
   const [totalPrice, setTotalPrice] = useState(() => {
-    // Initialize total price based on existing expenses
     return initialExpenses.reduce((acc, expense) => acc + parseInt(expense.amount, 10), 0);
   });
 
@@ -36,6 +41,7 @@ function App() {
     setExpenseLists(updatedExpenses);
     updateTotalPrice(updatedExpenses);
     localStorage.setItem('expenses', JSON.stringify(updatedExpenses));
+    filterExpenses(updatedExpenses, selectedDay);
   };
 
   const handleDeleteExpense = (id) => {
@@ -43,6 +49,7 @@ function App() {
     setExpenseLists(updatedList);
     updateTotalPrice(updatedList);
     localStorage.setItem('expenses', JSON.stringify(updatedList));
+    filterExpenses(updatedList, selectedDay);
   };
 
   const updateTotalPrice = (expenses) => {
@@ -50,17 +57,32 @@ function App() {
     setTotalPrice(total);
   };
 
+  const [selectedDay, setSelectedDay] = useState(new Date().getDate());
+
+  const filterExpenses = (expenses, day) => {
+    const filtered = expenses.filter((expense) => {
+      const expenseDate = new Date(expense.timeStamp);
+      return expenseDate.getDate() === day;
+    });
+    setFilteredExpenses(filtered);
+    updateTotalPrice(filtered);
+  };
+
+  const onFilterChange = (day) => {
+    setSelectedDay(day);
+    filterExpenses(expenseLists, day);
+  };
+
   return (
     <div className="App">
       <Container>
         <header className="App-header">
           <Greetings />
-          <FilterPills />
-          {/* <TimePillList /> */}
+          <FilterPills onFilterChange={onFilterChange} />
           <TotalPrice totalPrice={totalPrice} />
         </header>
         <main>
-          <ExpenseList expenseLists={expenseLists} onDeleteExpense={handleDeleteExpense} />
+          <ExpenseList expenseLists={filteredExpenses} onDeleteExpense={handleDeleteExpense} />
           <ExpenseForm isOpen={isModalOpen} handleClickModal={handleClickModal} onAddExpense={handleAddExpense} />
           <button className="add__expense" onClick={handleClickModal}>
             Add Expense

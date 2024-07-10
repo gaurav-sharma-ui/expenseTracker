@@ -19,13 +19,21 @@ select{
     border-radius: 10px;
     background-color: white;
     margin-top: 2px;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg xmlns%3D%27http%3A//www.w3.org/2000/svg%27 width%3D%2718%27 height%3D%2718%27 viewBox%3D%270 0 24 24%27 fill%3D%27none%27 stroke%3D%27%23000%27 stroke-width%3D%272%27 stroke-linecap%3D%27round%27 stroke-linejoin%3D%27round%27 class%3D%27feather feather-chevron-down%27%3E%3Cpolyline points%3D%276 9 12 15 18 9%27%3E%3C/polyline%3E%3C/svg%3E');
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    background-size: 12px;
+    cursor: pointer;
 }
 `
 
-export default function FilterPills(){
+export default function FilterPills({onFilterChange}){
     const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth());
     const [selectedWeek,setSelectedWeek] = useState('Week-1');
-    const [selectedDay,setSelectedDay] = useState(1);
+    const [selectedDay,setSelectedDay] = useState(new Date().getDate());
 
     const getDaysInMonth = (month) => {
         const year = new Date().getFullYear(); // Use current year
@@ -42,12 +50,14 @@ export default function FilterPills(){
 
       function handleDayChange(e){
         const newDay = parseInt(e.target.value);
-        setSelectedDay(newDay)
+        setSelectedDay(newDay);
+        onFilterChange(newDay)
       }
 
       function handleMonthChange(e){
         const newMonth = parseInt(e.target.value);
         setSelectedMonth(newMonth);
+        setSelectedDay(1);
       }
 
       function handleWeekChange(e){
